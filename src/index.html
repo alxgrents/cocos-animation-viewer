@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./cocos.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="app-container">
+    <canvas id="app" width="500" height="950"></canvas>
+</div>
+<div id="widget-settings">
+    <h3>Настройки</h3>
+    <button
+            type="button"
+            class="btn btn-primary"
+            id="add-sprite"
+            data-bs-toggle="modal"
+            data-bs-target="#spriteModal"
+    >Добавить картинку</button>
+    <button
+            type="button"
+            class="btn btn-primary"
+            id="add-spine"
+            data-bs-toggle="modal"
+            data-bs-target="#spineModal"
+    >Добавить анимацию</button>
+    <div>
+        <label for="colorPicker">Цвет фона</label>
+        <input type="color" id="colorPicker" value="#ffffff">
+    </div>
+    <h4>Элементы</h4>
+    <div id="elements"></div>
+</div>
+
+<div class="modal fade" id="spriteModal" tabindex="-1" aria-labelledby="spriteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="spriteModalLabel">Добавить картинку</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <label for="spriteFile" class="form-label">Картинка</label>
+                <input class="form-control" type="file" id="spriteFile">
+            </div>
+            <div class="modal-footer">
+                <button id="spriteModalClose" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button id="loadSprite" type="button" class="btn btn-primary">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="spineModal" tabindex="-1" aria-labelledby="spineModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="spineModalLabel">Добавить анимацию</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <label for="imageFile" class="form-label">Картинка</label>
+                <input class="form-control" type="file" id="imageFile">
+                <label for="atlasFile" class="form-label">Атлас</label>
+                <input class="form-control" type="file" id="atlasFile">
+                <label for="jsonFile" class="form-label">JSON</label>
+                <input class="form-control" type="file" id="jsonFile">
+            </div>
+            <div class="modal-footer">
+                <button id="spineModalClose" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button id="loadSpine" type="button" class="btn btn-primary">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

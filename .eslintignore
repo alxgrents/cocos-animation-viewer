@@ -1,0 +1,7 @@
+/build
+/node_modules
+/templates
+/templates/*
+/typings/*
+/typings
+/webpack*.config.js
