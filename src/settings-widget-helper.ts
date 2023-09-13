@@ -130,6 +130,7 @@ function showValue (node: cc.Node, input: HTMLInputElement) {
             y: node.getPositionY(),
             scale: node.getScale(),
             opacity: node.getOpacity(),
+            zindex: node.getLocalZOrder(),
         }[input.name];
     }
 }
@@ -146,6 +147,7 @@ function setValue (node: cc.Node, input: HTMLInputElement) {
     return {
         x: () => node.setPositionX(value),
         y: () => node.setPositionY(value),
+        zindex: () => node.setLocalZOrder(value),
         scale: () => node.setScale(value),
         opacity: () => node.setOpacity(value),
         visible: () => node.setVisible(value),
@@ -159,6 +161,7 @@ function createSettingsForSprite (node: cc.Node): HTMLDivElement {
         <label for="x">x:</label><input class="node-property" type="text" name="x" class="x"><br>
         <label for="y">y:</label><input class="node-property" type="text" name="y" class="y"><br>
         <label for="scale">scale:</label><input class="node-property" type="text" name="scale" class="scale"><br>
+        <label for="zindex">scale:</label><input class="node-property" type="text" name="zindex" class="zindex"><br>
         <label for="opacity">opacity:</label><input class="node-property" type="text" name="opacity" class="opacity"><br>
         <label for="visible">visible:</label><input class="node-property" type="checkbox" name="visible" class="visible"><br>
     `;
