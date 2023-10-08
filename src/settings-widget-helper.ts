@@ -17,6 +17,8 @@ export class SettingsWidgetHelper {
     private readonly jsonFile = document.querySelector<HTMLInputElement>('#jsonFile');
     private readonly spineModalClose = document.querySelector<HTMLButtonElement>('#spineModalClose');
 
+    private readonly hotkeyModal = document.querySelector<HTMLDivElement>('#hotkeyModal');
+
     private readonly elements = document.querySelector<HTMLDivElement>('#elements');
 
     private scene!: cc.Scene;
@@ -24,10 +26,53 @@ export class SettingsWidgetHelper {
     private spriteIndex = 1;
     private spineIndex = 1;
 
+    private readonly hotkeys = new Map();
+
+    private _disableKeydown = false;
+
     init (scene: cc.Scene) {
         this.scene = scene;
         this.loadSprite.addEventListener('click', this._onLoadSprite);
         this.loadSpine.addEventListener('click', this._onLoadSpine);
+        this.hotkeyModal.addEventListener('shown.bs.modal', this._onHotkeyModalOpen);
+        document.addEventListener('keydown', this._onkeydown, {capture: true});
+    }
+
+    _onkeydown = (event) => {
+        if (this._disableKeydown) {
+            return;
+        }
+
+        const key = event.key.toLowerCase();
+        console.log('keydown', key);
+        const callback = this.hotkeys.get(key);
+        if (callback) {
+            callback();
+        }
+    }
+
+    _onHotkeyModalOpen = (event) => {
+        this._disableKeydown = true;
+        console.log('_onHotkeyModalOpen', event);
+        const button = event.relatedTarget;
+        const callback = button.parentElement.querySelector('.animation-play').onclick;
+        let currentKey = null;
+        const onKeydown = (event) => {
+            const key = event.key.toLowerCase();
+            document.getElementById('hotkeyValue').innerText = key;
+            currentKey = key;
+            console.log(event.key.toLowerCase());
+        };
+        document.addEventListener('keydown', onKeydown);
+
+        this.hotkeyModal.addEventListener('hidden.bs.modal', () => {
+            document.removeEventListener('keydown', onKeydown);
+            if (currentKey) {
+                this.hotkeys.set(currentKey, callback);
+                button.innerText = currentKey;
+            }
+            this._disableKeydown = false;
+        }, { once: true });
     }
 
     _onLoadSpine = async () => {
@@ -161,7 +206,7 @@ function createSettingsForSprite (node: cc.Node): HTMLDivElement {
         <label for="x">x:</label><input class="node-property" type="text" name="x" class="x"><br>
         <label for="y">y:</label><input class="node-property" type="text" name="y" class="y"><br>
         <label for="scale">scale:</label><input class="node-property" type="text" name="scale" class="scale"><br>
-        <label for="zindex">scale:</label><input class="node-property" type="text" name="zindex" class="zindex"><br>
+        <label for="zindex">zindex:</label><input class="node-property" type="text" name="zindex" class="zindex"><br>
         <label for="opacity">opacity:</label><input class="node-property" type="text" name="opacity" class="opacity"><br>
         <label for="visible">visible:</label><input class="node-property" type="checkbox" name="visible" class="visible"><br>
     `;
@@ -183,6 +228,7 @@ function createSettingsForSprite (node: cc.Node): HTMLDivElement {
                 <i>loop</i>
                 <input type="checkbox" class="animation-loop">
                 <button width="30px" class="animation-play">⏵</button>
+                <button width="30px" class="hotkey-bind" data-bs-toggle="modal" data-bs-target="#hotkeyModal">⏺</button>
             `;
             const track = animationSetting.querySelector<HTMLInputElement>('.animation-track');
             track.addEventListener('input', () => {
@@ -196,25 +242,31 @@ function createSettingsForSprite (node: cc.Node): HTMLDivElement {
                 data.loop = loop.checked;
             });
             const play = animationSetting.querySelector<HTMLInputElement>('.animation-play');
-            play.addEventListener('click', () => {
-                if (data.started) {
-                    node.clearTrack(data.startedTrack);
-                    data.started = false;
-                    play.innerHTML = '⏵'
-                } else {
-                    data.startedTrack = data.track;
-                    const trackEntry = node.setAnimation(data.startedTrack, animation.name, data.loop);
-                    data.started = true;
-                    play.innerHTML = '⏸';
+            const start = () => {
+                data.startedTrack = data.track;
+                const trackEntry = node.setAnimation(data.startedTrack, animation.name, data.loop);
+                data.started = true;
+                play.innerHTML = '⏯';
 
-                    if (!data.loop) {
-                        node.setTrackCompleteListener(trackEntry, () => {
-                            data.started = false;
-                            play.innerHTML = '⏵'
-                        });
-                    }
+                if (!data.loop) {
+                    node.setTrackCompleteListener(trackEntry, () => {
+                        data.started = false;
+                        play.innerHTML = '⏵'
+                    });
                 }
-            });
+            };
+            const restart = () => {
+                node.clearTrack(data.startedTrack);
+
+                start();
+            }
+            play.onclick = () => {
+                if (data.started) {
+                    restart();
+                } else {
+                    start();
+                }
+            };
 
             div.append(animationSetting);
         });
